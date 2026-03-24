@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const KEY = 'taskflow-tasks'
+const KEY = 'TaskBuddy-tasks'
 
 export function useTasks() {
   const [tasks, setTasks] = useState(() => {

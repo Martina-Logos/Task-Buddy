@@ -4,9 +4,9 @@ import { useReminder }     from './hooks/useReminder'
 import TaskForm            from './components/TaskForm'
 import TaskList            from './components/TaskList'
 import NotificationBell    from './components/NotificationBell'
-import StatsBar            from './src/components/StatsBar'
-import FilterBar           from './src/components/FilterBar'
-import SearchBar           from './src/components/SearchBar'
+import StatsBar            from './components/StatsBar'
+import FilterBar           from './components/FilterBar'
+import SearchBar           from './components/SearchBar'
 
 export default function App() {
   const { tasks, addTask, toggleTask, deleteTask, editTask } = useTasks()
@@ -56,8 +56,8 @@ export default function App() {
           <div className="header-left">
             <div className="logo-mark">✦</div>
             <div>
-              <h1 className="app-title">Taskflow</h1>
-              <p className="app-sub">Your day, organized.</p>
+              <h1 className="app-title">TaskBuddy</h1>
+              <p className="app-sub">Focus. Act. Complete</p>
             </div>
           </div>
           <NotificationBell />

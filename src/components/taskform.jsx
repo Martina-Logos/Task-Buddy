@@ -14,8 +14,9 @@ export default function TaskForm({ onAdd }) {
     setPriority('medium')
   }
 
-  const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-    .toISOString().slice(0, 16)
+ const nowLocal = new Date(
+  new Date().getTime() - new Date().getTimezoneOffset() * 60000
+).toISOString().slice(0, 16)
 
   return (
     <form onSubmit={handleSubmit} className="card task-form">

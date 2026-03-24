@@ -4,20 +4,34 @@ export function useReminder(tasks) {
   const timers = useRef([])
 
   useEffect(() => {
+    // Clear old timers
     timers.current.forEach(clearTimeout)
     timers.current = []
 
-    if (!('Notification' in window) || Notification.permission !== 'granted') return
+    // Check support + permission
+    if (typeof Notification === 'undefined') return
+    if (Notification.permission !== 'granted') return
 
     const now = Date.now()
 
     tasks.forEach(task => {
       if (task.completed || !task.reminderTime) return
-      const delay = new Date(task.reminderTime).getTime() - now
-      if (delay <= 0) return
 
+      const reminderTime = new Date(task.reminderTime).getTime()
+      const delay = reminderTime - now
+
+      // 🔥 Handle past reminders (missed notifications)
+      if (delay <= 0) {
+        new Notification('⏰ Task Reminder — TaskBuddy', {
+          body: task.title,
+          icon: '/vite.svg',
+        })
+        return
+      }
+
+      // Schedule future reminder
       const id = setTimeout(() => {
-        new Notification('⏰ Task Reminder — Taskflow', {
+        new Notification('⏰ Task Reminder — TaskBuddy', {
           body: task.title,
           icon: '/vite.svg',
         })
@@ -26,6 +40,9 @@ export function useReminder(tasks) {
       timers.current.push(id)
     })
 
-    return () => timers.current.forEach(clearTimeout)
+    // Cleanup on re-run/unmount
+    return () => {
+      timers.current.forEach(clearTimeout)
+    }
   }, [tasks])
 }
