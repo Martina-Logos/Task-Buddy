@@ -1,16 +1,88 @@
-# React + Vite
+# 📋 Task Reminder App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A beginner-friendly todo app with browser notifications, built with **React + Vite + TailwindCSS** and the **Web Notifications API**.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- ✅ Add tasks with optional reminder date/time
+- 🔔 Browser notifications fire at the scheduled time
+- 💾 Tasks persist across page refreshes (via `localStorage`)
+- 🗑️ Delete tasks / mark them complete
+- 📱 Responsive UI styled with TailwindCSS
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Tool | Role |
+|---|---|
+| React 18 + Vite | UI framework + dev server |
+| TailwindCSS 3 | Utility-first styling |
+| Web Notifications API | Browser reminder notifications |
+| localStorage | Client-side persistence (no backend) |
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+- Node.js v18 or higher — [download here](https://nodejs.org)
+- npm v9+ (comes with Node)
+
+### Installation
+
+```bash
+# 1. Clone the repo (or unzip the submission)
+git clone https://github.com/YOUR_USERNAME/todo-reminder-app.git
+cd todo-reminder-app
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the dev server
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Build for production
+
+```bash
+npm run build      # outputs to /dist
+npm run preview    # preview the production build locally
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── TaskForm.jsx          # Add task + reminder time picker
+│   ├── TaskList.jsx          # Renders pending & completed tasks
+│   ├── TaskItem.jsx          # Single task card
+│   └── NotificationBell.jsx  # Notification permission UI
+├── hooks/
+│   ├── useTasks.js           # Task CRUD + localStorage sync
+│   └── useReminder.js        # Schedules Web Notifications
+├── App.jsx                   # Root component
+├── main.jsx                  # React entry point
+└── index.css                 # Tailwind directives
+```
+
+## 🔔 How Notifications Work
+
+1. Click **Enable Reminders** in the top-right corner
+2. Allow notifications when the browser prompts you
+3. Add a task and set a future reminder time
+4. When the time arrives, a browser notification will appear — even if the tab is in the background
+
+> **Note:** Notifications require a secure context (HTTPS or localhost). Safari on macOS has limited support.
+
+## 📖 Toolkit Document
+
+See [`TOOLKIT.md`](./TOOLKIT.md) for the full beginner's guide including:
+- Technology overview
+- Step-by-step setup instructions
+- AI Prompt Journal
+- Common errors & fixes
+- Reference resources
+
+## 📝 License
+
+MIT

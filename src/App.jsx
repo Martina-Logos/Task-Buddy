@@ -1,121 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useMemo } from 'react'
+import { useTasks }        from './hooks/useTasks'
+import { useReminder }     from './hooks/useReminder'
+import TaskForm            from './components/TaskForm'
+import TaskList            from './components/TaskList'
+import NotificationBell    from './components/NotificationBell'
+import StatsBar            from './src/components/StatsBar'
+import FilterBar           from './src/components/FilterBar'
+import SearchBar           from './src/components/SearchBar'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const { tasks, addTask, toggleTask, deleteTask, editTask } = useTasks()
+  useReminder(tasks)
+
+  const [filter, setFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('newest')
+  const [search, setSearch] = useState('')
+
+  const priorityOrder = { high: 0, medium: 1, low: 2 }
+
+  const filtered = useMemo(() => {
+    let result = [...tasks]
+
+    if (search.trim())
+      result = result.filter(t =>
+        t.title.toLowerCase().includes(search.toLowerCase())
+      )
+
+    if (filter === 'pending')   result = result.filter(t => !t.completed)
+    if (filter === 'completed') result = result.filter(t =>  t.completed)
+    if (['high','medium','low'].includes(filter))
+      result = result.filter(t => t.priority === filter)
+
+    if (sortBy === 'dueDate')
+      result.sort((a, b) => {
+        if (!a.reminderTime) return 1
+        if (!b.reminderTime) return -1
+        return new Date(a.reminderTime) - new Date(b.reminderTime)
+      })
+    else if (sortBy === 'priority')
+      result.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
+    else
+      result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+    return result
+  }, [tasks, filter, sortBy, search])
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-shell">
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+      <div className="blob blob-3" />
 
-      <div className="ticks"></div>
+      <div className="container">
+        <header className="header">
+          <div className="header-left">
+            <div className="logo-mark">✦</div>
+            <div>
+              <h1 className="app-title">Taskflow</h1>
+              <p className="app-sub">Your day, organized.</p>
+            </div>
+          </div>
+          <NotificationBell />
+        </header>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <StatsBar tasks={tasks} />
+        <TaskForm onAdd={addTask} />
+        <SearchBar value={search} onChange={setSearch} />
+        <FilterBar
+          filter={filter} setFilter={setFilter}
+          sortBy={sortBy} setSortBy={setSortBy}
+          count={filtered.length}
+        />
+        <TaskList
+          tasks={filtered}
+          onToggle={toggleTask}
+          onDelete={deleteTask}
+          onEdit={editTask}
+        />
+      </div>
+    </div>
   )
 }
-
-export default App
